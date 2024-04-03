@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/amarjeet/public_html/admin
+    - /bin/cp -R * $DEPLOYPATH
