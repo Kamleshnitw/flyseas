@@ -24,17 +24,17 @@ class LoginApiController extends Controller
 
         try{
 
-        
+
             $check_phone = User::where('phone', $request->phone)->where('user_type', 'vendor')->first();
             if($check_phone){
                 return response([
                     'message'=> 'Phone Number Already Exists.',
                 ],400);
-            }else{ 
+            }else{
                 $input = $request->all();
                 $input['user_type'] = 'retailer';
                 $user=User::updateOrCreate([
-                    
+
                     'phone'=>$request->phone
 
                 ],$input);
@@ -63,12 +63,12 @@ class LoginApiController extends Controller
                 ];
 
                 $retailer_user = Retailer::updateOrCreate([
-                    
+
                     'phone' => $user->phone,
 
                 ], $retailer_input);
                 if(config('app.env') == 'production' && $request->phone!="9628342206"){
-                    
+
                     // $phone = "+91".$request->phone;
                     // $token = getenv("TWILIO_AUTH_TOKEN");
                     // $twilio_sid = getenv("TWILIO_SID");
@@ -79,7 +79,7 @@ class LoginApiController extends Controller
 
                     $otp = rand(111111, 999999);
                     Msg91::sms()->to('91'.$request->phone)->flow('64fa1d69d6fc056ef413c292')->variable('OTP', $otp)->send();
-                    
+
                     $data = new UserOtp;
                     $data->phone = $request->phone;
                     $data->otp = $otp;
@@ -89,12 +89,12 @@ class LoginApiController extends Controller
                 return response([
                     'message'=> 'Sending OTP.',
                 ],200);
-                
+
             }
         }catch(\Exception $e){
 
             return response([
-                'message'=> 'Something Went Wrong.',
+                'message'=> $e->getMessage(),
             ],400);
 
         }
@@ -136,7 +136,7 @@ class LoginApiController extends Controller
             if(config('app.env') == 'production' && $request->phone!="9628342206"){
                 $otp = rand(111111, 999999);
                 Msg91::sms()->to('91'.$request->phone)->flow('64fa1d69d6fc056ef413c292')->variable('OTP', $otp)->send();
-                
+
                 $data = new UserOtp;
                 $data->phone = $request->phone;
                 $data->otp = $otp;
@@ -150,19 +150,19 @@ class LoginApiController extends Controller
             // $twilio = new Client($twilio_sid, $token);
             // $twilio->verify->v2->services($twilio_verify_sid)->verifications
             //     ->create($phone, "sms");
-    
+
             return response([
                 'message'=> 'OTP send successfully.',
             ],200);
-            
+
         } catch (\Exception $e) {
 
             return response([
                 'message'=> 'Something Went Wrong.',
             ],400);
-            
+
         }
-        
+
     }
 
     public function verifyOtp(Request $request)

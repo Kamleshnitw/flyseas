@@ -28,8 +28,8 @@ class WalletApiController extends Controller
         $this->validate($request, [
             'amount'    => 'required|numeric|min:1'
         ]);
-        
-        $merchantTransaction = date('Ymd-His') . rand(10, 99); 
+
+        $merchantTransaction = date('Ymd-His') . rand(10, 99);
 
         $data =  $this->payload_creation($request->amount, auth()->user()->phone, $merchantTransaction, auth()->id());
 
@@ -74,9 +74,9 @@ class WalletApiController extends Controller
             "merchantTransactionId" => $merchantTransaction,
             "merchantUserId" => "MUID" . rand(1111, 9999),
             "amount" => $amount * 100,
-            "redirectUrl" => "https://flyseas.in/admin/api/phonepe/walletRedirectUrl?merchant_transaction_id=".$merchantTransaction."&user_id=".$user_id,
+            "redirectUrl" => "http://10.0.2.2/flyseas/api/phonepe/walletRedirectUrl?merchant_transaction_id=".$merchantTransaction."&user_id=".$user_id, //replace with server url
             "redirectMode" => "POST",
-            "callbackUrl" => "https://flyseas.in/admin/api/phonepe/walletRcallbackUrl?merchant_transaction_id=".$merchantTransaction."&user_id=".$user_id,
+            "callbackUrl" => "http://10.0.2.2/flyseas/api/phonepe/walletRcallbackUrl?merchant_transaction_id=".$merchantTransaction."&user_id=".$user_id, // replace with server url
             "mobileNumber" => $phone,
             "paymentInstrument" => ["type" => "PAY_PAGE"],
         );
@@ -85,7 +85,6 @@ class WalletApiController extends Controller
         $base64_payload = base64_encode($payload_json);
 
         $salt = env('PHONEPE_SALT'); // replace with your actual salt key
-
         $hash_input = $base64_payload . "/pg/v1/pay" . $salt;
 
         $sha256_hash = hash('sha256', $hash_input) . '###1';
@@ -109,7 +108,7 @@ class WalletApiController extends Controller
             $history->payment_details = json_encode($data);
             $history->save();
 
-            
+
         }else{
 
             $history = new RetailerWalletHistory;
@@ -140,7 +139,7 @@ class WalletApiController extends Controller
             $history->payment_details = json_encode($data);
             $history->save();
 
-            
+
         }else{
 
             $history = new RetailerWalletHistory;

@@ -30,7 +30,7 @@ class PaymentApiController extends Controller
         $order->save();
         $cartsDatas = Cart::where('user_id', auth()->id())->delete();
 
-        $merchantTransaction = date('Ymd-His') . rand(10, 99); 
+        $merchantTransaction = date('Ymd-His') . rand(10, 99);
 
         $data =  $this->payload_creation($request->grand_amount, auth()->user()->phone, $merchantTransaction, $order->id);
 
@@ -75,9 +75,9 @@ class PaymentApiController extends Controller
             "merchantTransactionId" => $merchantTransaction,
             "merchantUserId" => "MUID" . rand(1111, 9999),
             "amount" => $amount * 100,
-            "redirectUrl" => "https://flyseas.in/admin/api/phonepe/redirectUrl?merchant_transaction_id=".$merchantTransaction."&order_id=".$order_id,
+            "redirectUrl" => "http://10.0.2.2/flyseas/api/phonepe/redirectUrl?merchant_transaction_id=".$merchantTransaction."&order_id=".$order_id, //replace with server url
             "redirectMode" => "POST",
-            "callbackUrl" => "https://flyseas.in/admin/api/phonepe/callbackUrl?merchant_transaction_id=".$merchantTransaction."&order_id=".$order_id,
+            "callbackUrl" => "http://10.0.2.2/flyseas/api/phonepe/callbackUrl?merchant_transaction_id=".$merchantTransaction."&order_id=".$order_id, //replace with server url
             "mobileNumber" => $phone,
             "paymentInstrument" => ["type" => "PAY_PAGE"],
         );
